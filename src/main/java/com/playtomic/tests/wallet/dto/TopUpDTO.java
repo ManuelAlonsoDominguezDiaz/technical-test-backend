@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.math.BigDecimal;
 
 @Data
@@ -15,6 +16,7 @@ public class TopUpDTO {
     @Min(1)
     private BigDecimal amountToTopUp;
 
+    @NotEmpty
     private String creditCardNumber;
 
 }
