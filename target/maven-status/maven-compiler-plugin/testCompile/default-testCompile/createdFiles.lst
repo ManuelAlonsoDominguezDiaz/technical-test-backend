@@ -1,0 +1,4 @@
+com/playtomic/tests/wallet/unit/service/WalletServiceTest.class
+com/playtomic/tests/wallet/unit/service/StripeServiceTest.class
+com/playtomic/tests/wallet/it/WalletApplicationIT.class
+com/playtomic/tests/wallet/unit/api/WalletControllerTest.class
