@@ -1,8 +1,7 @@
 package com.playtomic.tests.wallet.api;
 
-import com.playtomic.tests.wallet.dto.TopUpDTO;
+import com.playtomic.tests.wallet.dto.TopUpByCreditCardDTO;
 import com.playtomic.tests.wallet.dto.WalletInfoDTO;
-import com.playtomic.tests.wallet.service.stripe.IStripService;
 import com.playtomic.tests.wallet.service.wallet.IWalletService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WalletControllerImpl implements IWalletController {
 
-    private IWalletService walletService;
+    private final IWalletService walletService;
 
-    public WalletControllerImpl(IWalletService walletService, IStripService stripService) {
+    public WalletControllerImpl(IWalletService walletService) {
         this.walletService = walletService;
     }
 
@@ -24,8 +23,8 @@ public class WalletControllerImpl implements IWalletController {
     }
 
     @Override
-    public ResponseEntity<WalletInfoDTO> topUpWallet(String uuid, TopUpDTO topUpDTO) {
-        return new ResponseEntity<>(walletService.topUpWallet(uuid, topUpDTO), HttpStatus.CREATED);
+    public ResponseEntity<WalletInfoDTO> topUpWalletByCreditCard(String uuid, TopUpByCreditCardDTO topUpByCreditCardDTO) {
+        return new ResponseEntity<>(walletService.topUpWalletByCreditCard(uuid, topUpByCreditCardDTO), HttpStatus.OK);
     }
 
     /**
@@ -34,7 +33,7 @@ public class WalletControllerImpl implements IWalletController {
     @Override
     public ResponseEntity<Void> refundWallet(String paymentId) {
         walletService.decreaseWallet(paymentId);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

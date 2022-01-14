@@ -1,6 +1,6 @@
 package com.playtomic.tests.wallet.service.wallet;
 
-import com.playtomic.tests.wallet.dto.TopUpDTO;
+import com.playtomic.tests.wallet.dto.TopUpByCreditCardDTO;
 import com.playtomic.tests.wallet.dto.WalletInfoDTO;
 import com.playtomic.tests.wallet.entity.WalletEntity;
 import com.playtomic.tests.wallet.exception.ErrorCode;
@@ -16,9 +16,9 @@ import java.math.BigDecimal;
 @Service
 public class WalletServiceImpl implements IWalletService {
 
-    private WalletRepository walletRepository;
+    private final WalletRepository walletRepository;
 
-    private IStripService stripService;
+    private final IStripService stripService;
 
     public WalletServiceImpl(WalletRepository walletRepository, IStripService stripService)
     {
@@ -28,23 +28,22 @@ public class WalletServiceImpl implements IWalletService {
 
     @Override
     public WalletInfoDTO getWalletInfo(String uuid) {
-        WalletEntity walletEntity = getWallet(uuid);
+        WalletEntity walletEntity = getWalletByUuid(uuid);
         return new WalletInfoDTO(walletEntity.getUuid(), walletEntity.getAmount());
     }
 
     /**
-     * For top-ups I prefer other table, something like a transactions table,
+     * For top-ups I prefer other table instead increasing the money directly, something like a wallet_transactions,
      * which launch a pl/sql to modify the wallet amount.
      * But for this case I will increase the value directly onto the wallet's table.
      */
     @Override
     @Transactional
-    public WalletInfoDTO topUpWallet(String uuid, TopUpDTO topUpDTO) {
-        stripService.charge(topUpDTO.getCreditCardNumber(), topUpDTO.getAmountToTopUp());
-        WalletEntity walletEntity = getWallet(uuid);
-        BigDecimal newAmount = new BigDecimal(walletEntity.getAmount().add(topUpDTO.getAmountToTopUp()).doubleValue());
+    public WalletInfoDTO topUpWalletByCreditCard(String uuid, TopUpByCreditCardDTO topUpByCreditCardDTO) {
+        WalletEntity walletEntity = getWalletByUuid(uuid);
+        BigDecimal newAmount = new BigDecimal(walletEntity.getAmount().add(topUpByCreditCardDTO.getAmountToTopUp()).doubleValue());
         walletEntity.setAmount(newAmount);
-        walletRepository.save(walletEntity);
+        stripService.charge(topUpByCreditCardDTO.getCreditCardNumber(), topUpByCreditCardDTO.getAmountToTopUp());
         return new WalletInfoDTO(walletEntity.getUuid(), walletEntity.getAmount());
     }
 
@@ -56,7 +55,7 @@ public class WalletServiceImpl implements IWalletService {
         stripService.refund(paymentId);
     }
 
-    private WalletEntity getWallet(String uuid) {
+    private WalletEntity getWalletByUuid(String uuid) {
         return walletRepository.findByUuid(uuid)
                 .orElseThrow(() -> new WalletNotFoundException(
                         ErrorCode.WALLET_NOT_FOUND.getCode(),

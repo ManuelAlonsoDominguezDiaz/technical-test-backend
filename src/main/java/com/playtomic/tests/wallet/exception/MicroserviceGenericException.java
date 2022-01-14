@@ -6,9 +6,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class MicroserviceGenericException extends RuntimeException {
 
-    private String code;
-    private String message;
-    private HttpStatus status;
+    private final String code;
+    private final String message;
+    private final HttpStatus status;
 
     public MicroserviceGenericException(String code, String message, HttpStatus status) {
         this.code = code;

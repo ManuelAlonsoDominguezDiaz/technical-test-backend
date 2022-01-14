@@ -24,13 +24,13 @@ import java.net.URI;
 public class StripeServiceImpl implements IStripService {
 
     @NonNull
-    private URI chargesUri;
+    private final URI chargesUri;
 
     @NonNull
-    private String refundsUri;
+    private final String refundsUri;
 
     @NonNull
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     public StripeServiceImpl(@Value("${stripe.simulator.charges-uri}") @NonNull URI chargesUri,
                              @Value("${stripe.simulator.refunds-uri}") @NonNull String refundsUri,
@@ -62,7 +62,7 @@ public class StripeServiceImpl implements IStripService {
      * Refunds the specified payment.
      */
     public RefundDTO refund(@NonNull String paymentId) throws StripeServiceException {
-        return restTemplate.postForEntity(refundsUri.toString(), null, RefundDTO.class, paymentId).getBody();
+        return restTemplate.postForEntity(refundsUri, null, RefundDTO.class, paymentId).getBody();
     }
 
     @AllArgsConstructor

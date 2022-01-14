@@ -1,14 +1,14 @@
 package com.playtomic.tests.wallet.api;
 
-import com.playtomic.tests.wallet.dto.TopUpDTO;
+import com.playtomic.tests.wallet.dto.TopUpByCreditCardDTO;
 import com.playtomic.tests.wallet.dto.WalletInfoDTO;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.Example;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -19,11 +19,13 @@ import javax.validation.Valid;
 public interface IWalletController {
 
     @GetMapping(path = "/{uuid}", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<WalletInfoDTO> getWalletInfo(@PathVariable String uuid);
+    ResponseEntity<WalletInfoDTO> getWalletInfo(@PathVariable @ApiParam(example = "5b1280a3-f2a8-436b-8e0e-99e46278e441") String uuid);
 
-    @PostMapping(path = "/{uuid}/top-up", produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<WalletInfoDTO> topUpWallet(@PathVariable String uuid, @Valid @RequestBody TopUpDTO topUpDTO);
+    @PutMapping(path = "/{uuid}/top-up", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<WalletInfoDTO> topUpWalletByCreditCard(
+            @PathVariable @ApiParam(example = "5b1280a3-f2a8-436b-8e0e-99e46278e441") String uuid,
+            @Valid @RequestBody TopUpByCreditCardDTO topUpByCreditCardDTO);
 
-    @PostMapping(path = "/refund/{paymentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(path = "/refund/{paymentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Void> refundWallet(@PathVariable String paymentId);
 }

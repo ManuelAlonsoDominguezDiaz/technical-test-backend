@@ -2,7 +2,7 @@ package com.playtomic.tests.wallet.unit.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playtomic.tests.wallet.api.WalletControllerImpl;
-import com.playtomic.tests.wallet.dto.TopUpDTO;
+import com.playtomic.tests.wallet.dto.TopUpByCreditCardDTO;
 import com.playtomic.tests.wallet.dto.WalletInfoDTO;
 import com.playtomic.tests.wallet.service.wallet.WalletServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,24 +55,24 @@ public class WalletControllerTest {
     }
 
     @Test
-    public void should_ReturnHttpStatusCreated_WhenTopUp_OK() throws Exception {
+    public void should_ReturnHttpStatusOK_WhenTopUp_OK() throws Exception {
 
         // Given
         String uuid = UUID.randomUUID().toString();
-        TopUpDTO topUpDTO = new TopUpDTO(BigDecimal.valueOf(50), "4444 5555 6666 7777 8888");
+        TopUpByCreditCardDTO topUpByCreditCardDTO = new TopUpByCreditCardDTO(BigDecimal.valueOf(50), "4444 5555 6666 7777 8888");
 
         // When
-        Mockito.when(walletService.topUpWallet(Mockito.anyString(), Mockito.any()))
+        Mockito.when(walletService.topUpWalletByCreditCard(Mockito.anyString(), Mockito.any()))
                 .thenReturn(new WalletInfoDTO(uuid, BigDecimal.valueOf(50)));
 
         //Then
-        mockMvc.perform(MockMvcRequestBuilders.post("/wallet/" + UUID.randomUUID() + "/top-up")
-                        .content(mapper.writeValueAsString(topUpDTO)).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isCreated()).andReturn();
+        mockMvc.perform(MockMvcRequestBuilders.put("/wallet/" + UUID.randomUUID() + "/top-up")
+                        .content(mapper.writeValueAsString(topUpByCreditCardDTO)).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     }
 
     @Test
-    public void shouldReturnHttpStatusCreated_WhenRefund_OK() throws Exception {
+    public void shouldReturnHttpStatusOK_WhenRefund_OK() throws Exception {
 
         // Given
         String paymentId = UUID.randomUUID().toString();
@@ -81,9 +81,9 @@ public class WalletControllerTest {
         Mockito.doNothing().when(walletService).decreaseWallet(paymentId);
 
         //Then
-        mockMvc.perform(MockMvcRequestBuilders.post("/wallet/refund/" + paymentId)
+        mockMvc.perform(MockMvcRequestBuilders.put("/wallet/refund/" + paymentId)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isCreated()).andReturn();
+                .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     }
 
     /**

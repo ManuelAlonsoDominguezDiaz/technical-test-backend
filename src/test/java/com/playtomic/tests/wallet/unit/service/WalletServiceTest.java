@@ -1,6 +1,6 @@
 package com.playtomic.tests.wallet.unit.service;
 
-import com.playtomic.tests.wallet.dto.TopUpDTO;
+import com.playtomic.tests.wallet.dto.TopUpByCreditCardDTO;
 import com.playtomic.tests.wallet.dto.WalletInfoDTO;
 import com.playtomic.tests.wallet.entity.WalletEntity;
 import com.playtomic.tests.wallet.exception.ErrorCode;
@@ -65,15 +65,16 @@ public class WalletServiceTest {
 
     @Test
     public void should_TopUpWalletToTwenty_WhenValueIsTen() {
+
         // Given
         String uuid = UUID.randomUUID().toString();
-        TopUpDTO topUpDTO = new TopUpDTO(BigDecimal.TEN, "1111 2222 3333 4444");
+        TopUpByCreditCardDTO topUpByCreditCardDTO = new TopUpByCreditCardDTO(BigDecimal.TEN, "1111 2222 3333 4444");
         WalletEntity walletEntity = new WalletEntity(1L, uuid, BigDecimal.TEN);
 
         // When
         Mockito.when(walletRepository.findByUuid(uuid)).thenReturn(Optional.of(walletEntity));
-        Mockito.when(walletRepository.save(Mockito.any())).thenReturn(walletEntity);
-        WalletInfoDTO walletEntityReturn = walletService.topUpWallet(uuid, topUpDTO);
+        Mockito.doNothing().when(stripeService).charge(topUpByCreditCardDTO.getCreditCardNumber(), topUpByCreditCardDTO.getAmountToTopUp());
+        WalletInfoDTO walletEntityReturn = walletService.topUpWalletByCreditCard(uuid, topUpByCreditCardDTO);
 
         // Then
         Assertions.assertEquals(new BigDecimal(20), walletEntityReturn.getAmount());

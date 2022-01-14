@@ -1,13 +1,13 @@
 package com.playtomic.tests.wallet.service.wallet;
 
-import com.playtomic.tests.wallet.dto.TopUpDTO;
+import com.playtomic.tests.wallet.dto.TopUpByCreditCardDTO;
 import com.playtomic.tests.wallet.dto.WalletInfoDTO;
 
 public interface IWalletService {
 
     WalletInfoDTO getWalletInfo(String uuid);
 
-    WalletInfoDTO topUpWallet(String uuid, TopUpDTO topUpDTO);
+    WalletInfoDTO topUpWalletByCreditCard(String uuid, TopUpByCreditCardDTO topUpByCreditCardDTO);
 
     void decreaseWallet(String paymentId);
 }

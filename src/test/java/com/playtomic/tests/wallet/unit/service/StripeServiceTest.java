@@ -37,7 +37,7 @@ public class StripeServiceTest {
     public void setup() {
         Mockito.when(restTemplateBuilder.errorHandler(Mockito.any())).thenReturn(restTemplateBuilder);
         Mockito.when(restTemplateBuilder.build()).thenReturn(restTemplate);
-        stripeService = new StripeServiceImpl(testUri, "", restTemplateBuilder);
+        stripeService = new StripeServiceImpl(testUri, testUri.toString(), restTemplateBuilder);
     }
 
     @Test
