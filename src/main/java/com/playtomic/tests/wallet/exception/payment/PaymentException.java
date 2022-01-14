@@ -5,7 +5,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * The idea with this abstract class called Payment is to create a Factory Method pattern with other payments types
+ * As I have said on IStripService, the idea is to create a Factory Method pattern with other payments types (Paypal, Redsys, etc),
  * each one with their own exception types that extends from the PaymentException.
  * We could add common code for payments exceptions on this class.
  */

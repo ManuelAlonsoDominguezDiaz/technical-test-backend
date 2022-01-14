@@ -33,9 +33,9 @@ public class WalletServiceImpl implements IWalletService {
     }
 
     /**
-     * For top-ups I prefer other table instead increasing the money directly, something like a wallet_transactions,
-     * which launch a pl/sql to modify the wallet amount.
-     * But for this case I will increase the value directly onto the wallet's table.
+     * For top-ups and refunds I prefer other table instead increasing the money directly, something like wallet_transactions.
+     * which will launch a pl/sql code when inserting a new registry, who will modify the wallet amount.
+     * But for this case and to fit on test coding time, I will increase the amount directly into wallet's registry.
      */
     @Override
     @Transactional
@@ -48,7 +48,10 @@ public class WalletServiceImpl implements IWalletService {
     }
 
     /**
-     * Sorry, not enough time to implement correctly. So in this case just call to de stripService refund.
+     * Sorry, not enough time to implement correctly, and I even don't know if its neccesary for the code testing.
+     * README.md talks about two actions, to get a wallet and top-up money.
+     * But recieved email with the code testing info talks about three. Is this the third?
+     * So in this case just call to the stripService refund withou doing anything else.
      */
     @Override
     public void decreaseWallet(String paymentId) {
