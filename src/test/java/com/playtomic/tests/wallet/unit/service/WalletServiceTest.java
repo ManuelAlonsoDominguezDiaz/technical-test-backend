@@ -38,15 +38,16 @@ public class WalletServiceTest {
         // Given
         String uuid = UUID.randomUUID().toString();
         BigDecimal amount = BigDecimal.valueOf(50);
-        WalletInfoDTO walletInfoDTO = new WalletInfoDTO(uuid, amount);
+        WalletInfoDTO expectedWalletInfoDTO = new WalletInfoDTO(uuid, amount);
         WalletEntity walletEntity = new WalletEntity(1, uuid, amount);
 
         // When
-        Mockito.when(walletRepository.findByUuid(walletInfoDTO.getUUID())).thenReturn(Optional.of(walletEntity));
-
+        Mockito.when(walletRepository.findByUuid(uuid)).thenReturn(Optional.of(walletEntity));
+        WalletInfoDTO actualWalletInfoDTO = walletService.getWalletInfo(uuid);
 
         // Then
-        Assertions.assertEquals(walletInfoDTO.getUUID(), walletService.getWalletInfo(walletInfoDTO.getUUID()).getUUID());
+        Mockito.verify(walletRepository, Mockito.times(1)).findByUuid(uuid);
+        Assertions.assertEquals(expectedWalletInfoDTO.getUUID(), actualWalletInfoDTO.getUUID());
     }
 
     @Test
@@ -61,6 +62,7 @@ public class WalletServiceTest {
         // Then
         Assertions.assertThrows(WalletNotFoundException.class, () -> walletService.getWalletInfo(uuid),
                 ErrorCode.WALLET_NOT_FOUND.getMessage());
+        Mockito.verify(walletRepository,  Mockito.times(1)).findByUuid(uuid);
     }
 
     @Test
@@ -77,6 +79,9 @@ public class WalletServiceTest {
         WalletInfoDTO walletEntityReturn = walletService.topUpWalletByCreditCard(uuid, topUpByCreditCardDTO);
 
         // Then
+        Mockito.verify(walletRepository,  Mockito.times(1)).findByUuid(uuid);
+        Mockito.verify(stripeService,  Mockito.times(1))
+                .charge(topUpByCreditCardDTO.getCreditCardNumber(), topUpByCreditCardDTO.getAmountToTopUp());
         Assertions.assertEquals(new BigDecimal(20), walletEntityReturn.getAmount());
     }
 
