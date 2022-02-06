@@ -2,6 +2,7 @@ package com.playtomic.tests.wallet.api;
 
 import com.playtomic.tests.wallet.dto.TopUpByCreditCardDTO;
 import com.playtomic.tests.wallet.dto.WalletInfoDTO;
+import com.playtomic.tests.wallet.service.payment.PaymentEnum;
 import com.playtomic.tests.wallet.service.wallet.IWalletService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +24,8 @@ public class WalletControllerImpl implements IWalletController {
     }
 
     @Override
-    public ResponseEntity<WalletInfoDTO> topUpWalletByCreditCard(String uuid, TopUpByCreditCardDTO topUpByCreditCardDTO) {
-        return new ResponseEntity<>(walletService.topUpWalletByCreditCard(uuid, topUpByCreditCardDTO), HttpStatus.OK);
+    public ResponseEntity<WalletInfoDTO> topUpWalletByCreditCard(String uuid, PaymentEnum paymentPlatform, TopUpByCreditCardDTO topUpByCreditCardDTO) {
+        return new ResponseEntity<>(walletService.topUpWalletByCreditCard(uuid, paymentPlatform, topUpByCreditCardDTO), HttpStatus.OK);
     }
 
     /**

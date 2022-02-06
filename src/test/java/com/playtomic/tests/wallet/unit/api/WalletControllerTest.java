@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.playtomic.tests.wallet.api.WalletControllerImpl;
 import com.playtomic.tests.wallet.dto.TopUpByCreditCardDTO;
 import com.playtomic.tests.wallet.dto.WalletInfoDTO;
+import com.playtomic.tests.wallet.service.payment.PaymentEnum;
 import com.playtomic.tests.wallet.service.wallet.WalletServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,11 +63,11 @@ public class WalletControllerTest {
         TopUpByCreditCardDTO topUpByCreditCardDTO = new TopUpByCreditCardDTO(BigDecimal.valueOf(50), "4444 5555 6666 7777 8888");
 
         // When
-        Mockito.when(walletService.topUpWalletByCreditCard(Mockito.anyString(), Mockito.any()))
+        Mockito.when(walletService.topUpWalletByCreditCard(Mockito.anyString(), Mockito.any(PaymentEnum.class), Mockito.any()))
                 .thenReturn(new WalletInfoDTO(uuid, BigDecimal.valueOf(50)));
 
         //Then
-        mockMvc.perform(MockMvcRequestBuilders.put("/wallet/" + UUID.randomUUID() + "/top-up")
+        mockMvc.perform(MockMvcRequestBuilders.put("/wallet/" + UUID.randomUUID() + "/top-up/" + PaymentEnum.STRIPE)
                         .content(mapper.writeValueAsString(topUpByCreditCardDTO)).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk()).andReturn();
     }

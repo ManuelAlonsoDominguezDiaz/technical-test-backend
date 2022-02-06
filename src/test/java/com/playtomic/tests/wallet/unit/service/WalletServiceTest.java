@@ -6,7 +6,9 @@ import com.playtomic.tests.wallet.entity.WalletEntity;
 import com.playtomic.tests.wallet.exception.ErrorCode;
 import com.playtomic.tests.wallet.exception.wallet.WalletNotFoundException;
 import com.playtomic.tests.wallet.repository.WalletRepository;
-import com.playtomic.tests.wallet.service.stripe.StripeServiceImpl;
+import com.playtomic.tests.wallet.service.payment.PaymentEnum;
+import com.playtomic.tests.wallet.service.payment.PaymentFactory;
+import com.playtomic.tests.wallet.service.payment.PaymentService;
 import com.playtomic.tests.wallet.service.wallet.WalletServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -27,7 +29,10 @@ public class WalletServiceTest {
     WalletRepository walletRepository;
 
     @Mock
-    StripeServiceImpl stripeService;
+    PaymentFactory paymentFactory;
+
+    @Mock
+    PaymentService paymentService;
 
     @InjectMocks
     WalletServiceImpl walletService;
@@ -75,12 +80,14 @@ public class WalletServiceTest {
 
         // When
         Mockito.when(walletRepository.findByUuid(uuid)).thenReturn(Optional.of(walletEntity));
-        Mockito.doNothing().when(stripeService).charge(topUpByCreditCardDTO.getCreditCardNumber(), topUpByCreditCardDTO.getAmountToTopUp());
-        WalletInfoDTO walletEntityReturn = walletService.topUpWalletByCreditCard(uuid, topUpByCreditCardDTO);
+        Mockito.when(paymentFactory.getPaymentFactory(PaymentEnum.STRIPE.getPaymentService())).thenReturn(paymentService);
+        Mockito.doNothing().when(paymentService).charge(topUpByCreditCardDTO.getCreditCardNumber(), topUpByCreditCardDTO.getAmountToTopUp());
+        WalletInfoDTO walletEntityReturn = walletService.topUpWalletByCreditCard(uuid, PaymentEnum.STRIPE, topUpByCreditCardDTO);
 
         // Then
         Mockito.verify(walletRepository,  Mockito.times(1)).findByUuid(uuid);
-        Mockito.verify(stripeService,  Mockito.times(1))
+        Mockito.verify(paymentFactory, Mockito.times(1)).getPaymentFactory(PaymentEnum.STRIPE.getPaymentService());
+        Mockito.verify(paymentService,  Mockito.times(1))
                 .charge(topUpByCreditCardDTO.getCreditCardNumber(), topUpByCreditCardDTO.getAmountToTopUp());
         Assertions.assertEquals(new BigDecimal(20), walletEntityReturn.getAmount());
     }

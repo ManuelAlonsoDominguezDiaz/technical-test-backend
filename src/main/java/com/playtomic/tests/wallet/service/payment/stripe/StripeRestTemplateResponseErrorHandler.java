@@ -1,4 +1,4 @@
-package com.playtomic.tests.wallet.service.stripe;
+package com.playtomic.tests.wallet.service.payment.stripe;
 
 import com.playtomic.tests.wallet.exception.ErrorCode;
 import com.playtomic.tests.wallet.exception.payment.stripe.StripeAmountTooSmallException;

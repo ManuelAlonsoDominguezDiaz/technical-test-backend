@@ -6,7 +6,8 @@ import com.playtomic.tests.wallet.entity.WalletEntity;
 import com.playtomic.tests.wallet.exception.ErrorCode;
 import com.playtomic.tests.wallet.exception.wallet.WalletNotFoundException;
 import com.playtomic.tests.wallet.repository.WalletRepository;
-import com.playtomic.tests.wallet.service.stripe.IStripService;
+import com.playtomic.tests.wallet.service.payment.PaymentEnum;
+import com.playtomic.tests.wallet.service.payment.PaymentFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,12 @@ public class WalletServiceImpl implements IWalletService {
 
     private final WalletRepository walletRepository;
 
-    private final IStripService stripService;
+    private final PaymentFactory paymentFactory;
 
-    public WalletServiceImpl(WalletRepository walletRepository, IStripService stripService)
+    public WalletServiceImpl(WalletRepository walletRepository, PaymentFactory paymentFactory)
     {
         this.walletRepository = walletRepository;
-        this.stripService = stripService;
+        this.paymentFactory = paymentFactory;
     }
 
     @Override
@@ -39,11 +40,13 @@ public class WalletServiceImpl implements IWalletService {
      */
     @Override
     @Transactional
-    public WalletInfoDTO topUpWalletByCreditCard(String uuid, TopUpByCreditCardDTO topUpByCreditCardDTO) {
+    public WalletInfoDTO topUpWalletByCreditCard(String uuid, PaymentEnum paymentPlatform, TopUpByCreditCardDTO topUpByCreditCardDTO) {
         WalletEntity walletEntity = getWalletByUuid(uuid);
         BigDecimal newAmount = new BigDecimal(walletEntity.getAmount().add(topUpByCreditCardDTO.getAmountToTopUp()).doubleValue());
         walletEntity.setAmount(newAmount);
-        stripService.charge(topUpByCreditCardDTO.getCreditCardNumber(), topUpByCreditCardDTO.getAmountToTopUp());
+
+        paymentFactory.getPaymentFactory(paymentPlatform.getPaymentService())
+                .charge(topUpByCreditCardDTO.getCreditCardNumber(), topUpByCreditCardDTO.getAmountToTopUp());
         return new WalletInfoDTO(walletEntity.getUuid(), walletEntity.getAmount());
     }
 
@@ -55,7 +58,8 @@ public class WalletServiceImpl implements IWalletService {
      */
     @Override
     public void decreaseWallet(String paymentId) {
-        stripService.refund(paymentId);
+        paymentFactory.getPaymentFactory("STRIPE")
+                .refund(paymentId);
     }
 
     private WalletEntity getWalletByUuid(String uuid) {

@@ -3,7 +3,7 @@ package com.playtomic.tests.wallet.unit.service;
 
 import com.playtomic.tests.wallet.dto.RefundDTO;
 import com.playtomic.tests.wallet.exception.payment.stripe.StripeAmountTooSmallException;
-import com.playtomic.tests.wallet.service.stripe.StripeServiceImpl;
+import com.playtomic.tests.wallet.service.payment.stripe.StripeServiceImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

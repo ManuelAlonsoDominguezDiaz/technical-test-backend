@@ -1,8 +1,9 @@
-package com.playtomic.tests.wallet.service.stripe;
+package com.playtomic.tests.wallet.service.payment.stripe;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.playtomic.tests.wallet.dto.RefundDTO;
 import com.playtomic.tests.wallet.exception.payment.stripe.StripeServiceException;
+import com.playtomic.tests.wallet.service.payment.PaymentService;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,8 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.net.URI;
 
+import static com.playtomic.tests.wallet.service.payment.PaymentEnum.STRIPE_SERVICE;
+
 
 /**
  * Handles the communication with Stripe.
@@ -20,8 +23,8 @@ import java.net.URI;
  * A real implementation would call to String using their API/SDK.
  * This dummy implementation throws an error when trying to charge less than 10€.
  */
-@Service
-public class StripeServiceImpl implements IStripService {
+@Service(value = STRIPE_SERVICE)
+public class StripeServiceImpl implements PaymentService {
 
     @NonNull
     private final URI chargesUri;
@@ -54,6 +57,7 @@ public class StripeServiceImpl implements IStripService {
      * @throws StripeServiceException
      */
     public void charge(@NonNull String creditCardNumber, @NonNull BigDecimal amount) throws StripeServiceException {
+        System.out.println("TESTING PAYMENT FACTORY: STRIPE BEAN");
         ChargeRequest body = new ChargeRequest(creditCardNumber, amount);
         restTemplate.postForObject(chargesUri, body, Object.class);
     }
